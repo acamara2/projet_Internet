@@ -1,0 +1,13 @@
+#!/bin/bash
+ip addr add 200.6.252.2/26 dev eth0
+ip link set dev eth0 up
+ip addr add 200.6.252.65/26 dev eth1
+ip link set dev eth1 up
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+#Partie routage Statique
+#ip route add 200.6.252.192/26 via 200.6.252.66
+#ip route add 192.168.148.128/25 via 200.6.252.1
+#ip route add 200.6.252.128/26 via 200.6.252.66
+
+# Partie configuration DHCP

@@ -1,0 +1,56 @@
+network:
+  name: projet_internet
+  version: 0.1
+  hosts:
+    - equipementUtilisateur
+      mode : netns
+      init : ./scripts/equipementUtilisateur
+ 
+    - Routeur_Fai_Acces
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/Routeur_Fai_Acces/etc:/
+ 
+    - Box
+      mode : docker
+      image : dhcp_n7:latest
+      files : ./files/Box/etc:/
+ 
+    - Routeur_Fai_Interconnexion
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/Routeur_Fai_Interconnexion/etc:/
+ 
+    - Serveur_DNS
+      mode : docker
+      image : dns_n7:latest
+      files : ./files/Serveur_DNS/etc:/
+ 
+    - Routeur_Fai_Services
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/Routeur_Fai_Services/etc:/
+ 
+ 
+    - Serveur_Web
+      mode : docker
+      image : apache_n7:latest
+      files : ./files/Serveur_Web/var:/
+ 
+    - Serveur_Ftp
+      mode : docker
+      image : ftp_n7:latest
+      files : ./files/Serveur_Ftp/etc:/
+ 
+  links :
+    - equipementUtilisateur:eth0!Box:eth0
+    - Box:eth1!Routeur_Fai_Acces:eth0
+    - Routeur_Fai_Acces:eth1!Routeur_Fai_Interconnexion:eth0
+    - Routeur_Fai_Interconnexion:eth1!Routeur_Fai_Services:eth0
+ 
+  bridges:
+    - Switch0
+      interfaces: Serveur_DNS:eth0!Serveur_Web:eth0!Serveur_Ftp:eth0!Routeur_Fai_Services:eth1!
+ 
+  consoles :
+    - all
